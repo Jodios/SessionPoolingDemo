@@ -4,3 +4,4 @@ spring:
     port: 6379
 config:
   minutes: 15
+  maxSessions: 1000
