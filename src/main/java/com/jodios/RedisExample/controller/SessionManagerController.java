@@ -28,6 +28,11 @@ public class SessionManagerController {
         return service.getFromPool(epr);
     }
 
+    @PostMapping("/init")
+    public BlockingDeque<SessionCache> initSessionQueueForEPR(@RequestParam String epr) {
+        return service.initializeQueue(epr);
+    }
+
     @GetMapping("/getAll")
     public Map<String, BlockingDeque<SessionCache>> getAll(){
         return service.findAll();

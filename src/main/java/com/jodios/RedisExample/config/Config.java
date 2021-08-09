@@ -13,5 +13,6 @@ public class Config {
 
     private int minutes;
     private int maxSessions;
+    private int maxQueueWaitingTime;
 
 }
