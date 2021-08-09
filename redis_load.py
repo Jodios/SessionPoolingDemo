@@ -25,15 +25,15 @@ def _start(n):
     sessionRequest['session']['lastUsed'] = int(time.time())
     sessionRequest["epr"] = "testEPR1"
     print("Thread " + str(n) + " has token: " + data['token'])
-    time.sleep(random.randint(1,5))
+    time.sleep(random.randint(3,6))
     requests.post(save_token_url, json.dumps(sessionRequest), headers=headers)
     print("Thread " + str(n) + " Stopped")
 
-requests.delete(delete_all_url)
+# requests.delete(delete_all_url)
 r = requests.post(init_epr_url)
 print(json.loads(r.text))
 
-nThreads = 15
+nThreads = 10
 threads = []
 for n in range(nThreads):
     t = threading.Thread( target=_start, args=( n+1, ) )

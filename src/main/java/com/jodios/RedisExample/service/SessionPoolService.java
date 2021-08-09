@@ -38,7 +38,9 @@ public class SessionPoolService implements DisposableBean {
     public void addToPool(final String epr, SessionCache session) throws InterruptedException {
         log.info("Adding session to {}", epr);
         if(eprToQueue.containsKey(epr)){
-            eprToQueue.get(epr).offerFirst(session, 1, TimeUnit.SECONDS);
+            if( eprToQueue.get(epr).offerFirst(session, 1, TimeUnit.SECONDS) ){
+                // TODO if timeout then close session
+            }
         }else{
             BlockingDeque<SessionCache> newQueue = initializeQueue(epr);
             openSessionsMap.get(epr).incrementAndGet();
@@ -52,10 +54,13 @@ public class SessionPoolService implements DisposableBean {
         if(eprToQueue.containsKey(epr)){
             BlockingDeque<SessionCache> sessionQueue = eprToQueue.get(epr);
             if(sessionQueue.isEmpty() && openSessionsMap.get(epr).get()>=config.getMaxSessions()){
-                log.info("=========================WAITING FOR 4 SECONDS===============================");
-                return sessionQueue.pollFirst(config.getMaxQueueWaitingTime(), TimeUnit.SECONDS);
+                log.info("=========================WAITING FOR {} SECONDS===============================", config.getMaxQueueWaitingTime());
+                SessionCache session =  sessionQueue.pollFirst(config.getMaxQueueWaitingTime(), TimeUnit.SECONDS);
+                if(session == null){
+                    return sessionService.getNewSession();
+                }
             }
-
+            // [ 4, 3, 2, 1 ]
             SessionCache session;
             if(sessionQueue.isEmpty()){
                 session = sessionService.getNewSession();
@@ -118,7 +123,7 @@ public class SessionPoolService implements DisposableBean {
     @Override
     public void destroy() throws Exception {
         // TODO: When session is closed then close all active sessions
-        System.out.println("Destroying....");
+        log.info("Destroying....");
     }
 
 }
