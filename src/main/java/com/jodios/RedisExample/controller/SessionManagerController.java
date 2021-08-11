@@ -3,6 +3,7 @@ package com.jodios.RedisExample.controller;
 import com.jodios.RedisExample.model.SessionCache;
 import com.jodios.RedisExample.model.SessionManagerRequest;
 import com.jodios.RedisExample.service.SessionPoolService;
+import org.apache.commons.pool2.ObjectPool;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,7 +19,7 @@ public class SessionManagerController {
     SessionPoolService service;
 
     @PostMapping()
-    public Map<String, BlockingDeque<SessionCache>> save(@RequestBody final SessionManagerRequest request) throws InterruptedException {
+    public Map<String, ObjectPool<SessionCache>> save(@RequestBody final SessionManagerRequest request) throws Exception {
         service.addToPool(request.getEpr(), request.getSession());
         return getAll();
     }
@@ -34,12 +35,12 @@ public class SessionManagerController {
     }
 
     @GetMapping("/getAll")
-    public Map<String, BlockingDeque<SessionCache>> getAll(){
+    public Map<String, ObjectPool<SessionCache>> getAll(){
         return service.findAll();
     }
 
     @DeleteMapping("/deleteAll")
-    public Map<String, BlockingDeque<SessionCache>> deleteAll(){
+    public Map<String, ObjectPool<SessionCache>> deleteAll(){
         getAll().keySet().forEach(epr -> service.delete(epr));
         return getAll();
     }

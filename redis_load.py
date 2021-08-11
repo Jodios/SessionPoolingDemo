@@ -31,14 +31,13 @@ def _start(n):
 
 # requests.delete(delete_all_url)
 r = requests.post(init_epr_url)
-print(json.loads(r.text))
+# print(json.loads(r.text))
 
-nThreads = 10
+nThreads = 1
 threads = []
 for n in range(nThreads):
     t = threading.Thread( target=_start, args=( n+1, ) )
+    t.start() 
     threads.append( t )
-for thread in threads:
-    thread.start()
 for thread in threads:
     thread.join()

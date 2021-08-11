@@ -6,4 +6,4 @@ refreshScheduleDelayInMilliseconds: 900000
 config:
   minutes: 15
   maxSessions: 5
-  maxQueueWaitingTime: 60
+  maxQueueWaitingTime: 6000
