@@ -1,8 +1,9 @@
-package com.jodios.RedisExample.service;
+package com.jodios.RedisExample.service.impl;
 
 import com.jodios.RedisExample.config.Config;
 import com.jodios.RedisExample.factory.SessionObjectFactory;
 import com.jodios.RedisExample.model.SessionCache;
+import com.jodios.RedisExample.service.SabreSessionService;
 import com.jodios.RedisExample.util.SessionUtils;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.pool2.ObjectPool;
@@ -122,18 +123,18 @@ public class SessionPoolService implements DisposableBean {
         eprToQueue.remove(epr);
     }
 
-    @Scheduled( fixedDelayString = "${refreshScheduleDelayInMilliseconds}" )
-    public void refreshOldTokens(){
-        log.info("REMOVING OLD TOKENS FROM QUEUE");
-        eprToQueue.keySet().forEach(k -> {
-            eprToQueue.get(k).forEach(session -> {
-                if(utils.sessionHasBeenIdleForTooLong(session)){
-                    eprToQueue.get(k).remove(session);
-                    openSessionsMap.get(k).decrementAndGet();
-                }
-            });
-        });
-    }
+//    @Scheduled( fixedDelayString = "${refreshScheduleDelayInMilliseconds}" )
+//    public void refreshOldTokens(){
+//        log.info("REMOVING OLD TOKENS FROM QUEUE");
+//        eprToQueue.keySet().forEach(k -> {
+//            eprToQueue.get(k).forEach(session -> {
+//                if(utils.sessionHasBeenIdleForTooLong(session)){
+//                    eprToQueue.get(k).remove(session);
+//                    openSessionsMap.get(k).decrementAndGet();
+//                }
+//            });
+//        });
+//    }
 
     @Override
     public void destroy() throws Exception {

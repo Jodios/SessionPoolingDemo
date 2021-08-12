@@ -2,7 +2,7 @@ spring:
   redis:
     host: "localhost"
     port: 6379
-refreshScheduleDelayInMilliseconds: 900000
+refreshScheduleDelayInMilliseconds: 2000
 config:
   minutes: 15
   maxSessions: 5

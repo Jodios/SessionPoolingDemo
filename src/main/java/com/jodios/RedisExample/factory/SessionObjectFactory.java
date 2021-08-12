@@ -2,7 +2,6 @@ package com.jodios.RedisExample.factory;
 
 import com.jodios.RedisExample.model.SessionCache;
 import com.jodios.RedisExample.service.SabreSessionService;
-import com.jodios.RedisExample.service.SessionPoolService;
 import com.jodios.RedisExample.util.SessionUtils;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.pool2.PooledObject;

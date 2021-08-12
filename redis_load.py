@@ -33,7 +33,7 @@ def _start(n):
 r = requests.post(init_epr_url)
 # print(json.loads(r.text))
 
-nThreads = 1
+nThreads = 60
 threads = []
 for n in range(nThreads):
     t = threading.Thread( target=_start, args=( n+1, ) )

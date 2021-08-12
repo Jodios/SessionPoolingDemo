@@ -1,50 +1,41 @@
 package com.jodios.RedisExample.controller;
 
+import com.jodios.RedisExample.config.Config;
 import com.jodios.RedisExample.model.SessionCache;
 import com.jodios.RedisExample.model.SessionManagerRequest;
-import com.jodios.RedisExample.service.SessionPoolService;
-import org.apache.commons.pool2.ObjectPool;
+import com.jodios.RedisExample.service.KeyObjectPool;
+import com.jodios.RedisExample.service.impl.GenericKeyObjectPool;
+import com.jodios.RedisExample.service.impl.SessionObjectPoolFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
-import java.util.Queue;
-import java.util.concurrent.BlockingDeque;
+import javax.annotation.PostConstruct;
 
 @RestController
 @RequestMapping("/sessionManager")
 public class SessionManagerController {
 
     @Autowired
-    SessionPoolService service;
+    Config config;
+    @Autowired
+    SessionObjectPoolFactory factory;
+
+    KeyObjectPool<String, SessionCache> service;
+
+    @PostConstruct
+    public void init(){
+        service = new GenericKeyObjectPool<>(factory, config.getMaxSessions(), config.getMaxQueueWaitingTime());
+    }
 
     @PostMapping()
-    public Map<String, ObjectPool<SessionCache>> save(@RequestBody final SessionManagerRequest request) throws Exception {
-        service.addToPool(request.getEpr(), request.getSession());
-        return getAll();
+    public String save(@RequestBody final SessionManagerRequest request) throws Exception {
+        service.returnToPool(request.getEpr(), request.getSession());
+        return "DONE";
     }
 
     @GetMapping
     public SessionCache getSession(@RequestParam String epr) throws Exception {
         return service.getFromPool(epr);
     }
-
-    @PostMapping("/init")
-    public BlockingDeque<SessionCache> initSessionQueueForEPR(@RequestParam String epr) {
-        return service.initializeQueue(epr);
-    }
-
-    @GetMapping("/getAll")
-    public Map<String, ObjectPool<SessionCache>> getAll(){
-        return service.findAll();
-    }
-
-    @DeleteMapping("/deleteAll")
-    public Map<String, ObjectPool<SessionCache>> deleteAll(){
-        getAll().keySet().forEach(epr -> service.delete(epr));
-        return getAll();
-    }
-
-
 
 }
